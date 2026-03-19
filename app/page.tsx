@@ -1,65 +1,133 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import { useState, useRef, useEffect } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { MapaMundiInteractivo } from '../components/MapaMundiInteractivo';
+
+const RUTA_LOGO = '/logo_vios.jpeg'; 
+const RUTA_IMAGEN_SELECCIONA = '/selecciona.jpg'; 
+
+export default function GlobalGateway() {
+  const [videoTerminado, setVideoTerminado] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [menuAbierto, setMenuAbierto] = useState(false);
+
+  // --- ¡ACTUALIZADO: Enlace de Norte Americano modificado! ---
+  const continentes = [
+    { nombre: 'Norte Americano', href: 'https://virtualuniverse.com' },
+    { nombre: 'Sudamericano', href: '/sudamerica' },
+    { nombre: 'Europeo', href: '#' },
+    { nombre: 'Africano', href: '#' },
+    { nombre: 'Asiático', href: '#' },
+    { nombre: 'Oceanía', href: '#' },
+  ];
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.play().catch(error => {
+        console.log("Esperando interacción del usuario", error);
+      });
+    }
+  }, []);
+
+  const manejarFinalVideo = () => {
+    setVideoTerminado(true);
+    if (videoRef.current) {
+      videoRef.current.pause();
+    }
+  };
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+    <main className="relative min-h-screen w-full overflow-hidden bg-black flex flex-col antialiased">
+      
+      {/* --- 1. LOGOTIPO FLOTANTE --- */}
+      <div className="absolute top-6 right-6 z-[9999] pointer-events-auto">
+        <Link 
+          href="https://vioscode.io" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="bg-white/80 backdrop-blur-sm rounded-xl p-2 shadow-lg hover:scale-105 transition-transform block cursor-pointer"
+        >
+          <Image 
+            src={RUTA_LOGO}
+            alt="ViOs Code Logo"
+            width={120} 
+            height={50} 
+            priority 
+            className="object-contain rounded-lg"
+          />
+        </Link>
+      </div>
+
+      {/* --- 2. EL VIDEO DE FONDO --- */}
+      <video
+        ref={videoRef}
+        autoPlay
+        muted
+        playsInline
+        onEnded={manejarFinalVideo}
+        className="fixed inset-0 w-full h-full object-cover"
+      >
+        <source src="/videos/mapa_mundi.mp4" type="video/mp4" />
+      </video>
+
+      {/* --- 3. EL MAPA SVG INTERACTIVO --- */}
+      {videoTerminado && <MapaMundiInteractivo />}
+
+      {/* --- 4. BARRA DE INSTRUCCIONES INFERIOR CON TU IMAGEN --- */}
+      {videoTerminado && (
+        <div className="fixed bottom-0 left-0 w-full bg-black border-t border-cyan-500/20 py-6 z-90 px-6 shadow-[0_-10px_30px_rgba(0,0,0,0.5)] flex justify-center items-center pointer-events-none">
+            <Image 
+              src={RUTA_IMAGEN_SELECCIONA}
+              alt="Selecciona un continente"
+              width={1000} 
+              height={120} 
+              className="object-contain max-w-[90%] md:max-w-none pointer-events-auto" 
+              priority
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
         </div>
-      </main>
-    </div>
+      )}
+
+      {/* --- 5. BOTÓN Y MENÚ DE NAVEGACIÓN GLOBAL --- */}
+      {videoTerminado && (
+        <div className="fixed bottom-24 right-6 z-[9998] pointer-events-auto flex flex-col items-end gap-4 transition-all">
+          
+          <div className={`transition-all duration-300 ${menuAbierto ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}>
+            <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 p-6 min-w-[280px]">
+              <h2 className="text-gray-600 text-sm uppercase tracking-widest mb-6 px-3">Explora el Portal</h2>
+              <ul className="flex flex-col gap-3 w-full">
+                {continentes.map((continente, index) => (
+                  <li key={index} className="w-full">
+                    <Link 
+                      href={continente.href}
+                      // Agregamos target="_blank" si el enlace no es "#"
+                      target={continente.href !== '#' ? '_blank' : undefined}
+                      rel={continente.href !== '#' ? 'noopener noreferrer' : undefined}
+                      className="w-full flex justify-center p-3 rounded-xl text-xl font-light text-gray-900 hover:bg-cyan-50 hover:text-cyan-600 transition-colors border border-gray-100 hover:border-cyan-200/50"
+                      onClick={() => setMenuAbierto(false)} 
+                    >
+                      <span className="flex items-center justify-center leading-none">{continente.nombre}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          <button 
+            onClick={() => setMenuAbierto(!menuAbierto)}
+            className="bg-white/90 backdrop-blur-md rounded-full p-4 shadow-2xl hover:scale-110 transition-all border border-gray-200 relative group flex items-center justify-center w-16 h-16"
+            aria-label="Abrir menú"
+          >
+            <div className="flex flex-col gap-1.5 w-7">
+                <span className={`block h-0.5 w-full bg-gray-900 rounded-full transition-all duration-300 ${menuAbierto ? 'rotate-45 translate-y-2' : ''}`}></span>
+                <span className={`block h-0.5 w-full bg-gray-900 rounded-full transition-all duration-300 ${menuAbierto ? 'opacity-0' : ''}`}></span>
+                <span className={`block h-0.5 w-full bg-gray-900 rounded-full transition-all duration-300 ${menuAbierto ? '-rotate-45 -translate-y-2' : ''}`}></span>
+            </div>
+          </button>
+        </div>
+      )}
+    </main>
   );
 }
