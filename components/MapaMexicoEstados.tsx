@@ -21,7 +21,7 @@ export const MapaMexicoEstados = () => {
       <ComposableMap
         projection="geoMercator"
         projectionConfig={{
-          scale: 1700, // <--- AQUÍ ESTÁ LA CORRECCIÓN: Le bajamos el zoom de 1800 a 1200
+          scale: 1500, // <--- AQUÍ ESTÁ LA CORRECCIÓN: Le bajamos el zoom de 1800 a 1200
           center: [-102, 24] // Coordenadas para mantenerlo centrado
         }}
         className="w-full h-full max-h-[70vh] object-contain" // Agregamos max-h para asegurar que no se desborde
