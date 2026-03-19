@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { MapaMundiInteractivo } from '../components/MapaMundiInteractivo';
+import { PlanetaInteractivo } from '../components/PlanetaInteractivo'; // <--- AGREGAR ESTA LÍNEA
 
 const RUTA_LOGO = '/logo_vios.jpeg'; 
 const RUTA_IMAGEN_SELECCIONA = '/selecciona.jpg'; 
@@ -73,7 +74,7 @@ export default function GlobalGateway() {
       </video>
 
       {/* --- 3. EL MAPA SVG INTERACTIVO --- */}
-      {videoTerminado && <MapaMundiInteractivo />}
+      {videoTerminado && <PlanetaInteractivo />}
 
       {/* --- 4. BARRA DE INSTRUCCIONES INFERIOR CON TU IMAGEN --- */}
       {videoTerminado && (
