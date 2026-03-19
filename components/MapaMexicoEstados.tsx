@@ -8,6 +8,16 @@ const GEOJSON_MEXICO_ESTADOS = 'https://raw.githubusercontent.com/strotgen/mexic
 export const MapaMexicoEstados = () => {
   const [nombreEstado, setNombreEstado] = useState('');
 
+  // --- NUEVA FUNCIÓN: Limpia el nombre del estado para la URL ---
+  // Ejemplo: "Nuevo León" -> "nuevo-leon" | "Quintana Roo" -> "quintana-roo"
+  const formatearParaURL = (texto: string) => {
+    return texto
+      .toLowerCase() // Pasa todo a minúsculas
+      .normalize("NFD") // Separa las letras de los acentos
+      .replace(/[\u0300-\u036f]/g, "") // Borra los acentos
+      .replace(/\s+/g, '-'); // Cambia los espacios por guiones
+  };
+
   return (
     <div className="w-full h-full relative flex items-center justify-center">
       
@@ -21,10 +31,10 @@ export const MapaMexicoEstados = () => {
       <ComposableMap
         projection="geoMercator"
         projectionConfig={{
-          scale: 1500, // <--- AQUÍ ESTÁ LA CORRECCIÓN: Le bajamos el zoom de 1800 a 1200
-          center: [-102, 24] // Coordenadas para mantenerlo centrado
+          scale: 1470, 
+          center: [-102, 24] 
         }}
-        className="w-full h-full max-h-[70vh] object-contain" // Agregamos max-h para asegurar que no se desborde
+        className="w-full h-full max-h-[70vh] object-contain"
       >
         <Geographies geography={GEOJSON_MEXICO_ESTADOS}>
           {({ geographies }: any) =>
@@ -37,6 +47,18 @@ export const MapaMexicoEstados = () => {
                   geography={geo}
                   onMouseEnter={() => setNombreEstado(nombre)}
                   onMouseLeave={() => setNombreEstado('')}
+                  
+                  // --- NUEVO EVENTO: Al hacer clic redirige al otro dominio ---
+                  onClick={() => {
+                    const rutaEstado = formatearParaURL(nombre);
+                    console.log(`Iniciando salto hiperespacial a: viosvirtualplanet.com/${rutaEstado}`);
+                    // Te envía a la nueva página (abriendo en la misma pestaña)
+                    window.location.href = `https://viosvirtualplanet.com/${rutaEstado}`;
+                    
+                    // Nota: Si quisieras que se abriera en una pestaña NUEVA, usarías esto en su lugar:
+                    // window.open(`https://viosvirtualplanet.com/${rutaEstado}`, '_blank');
+                  }}
+
                   style={{
                     default: {
                       fill: "rgba(0, 0, 0, 0.4)",
